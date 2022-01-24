@@ -10,6 +10,7 @@
   },
   "parameters": {
     "adminUsername": {
+    "defaultValue": "rosmithj",
       "type": "string",
       "metadata": {
         "description": "Username for the Virtual Machine."
