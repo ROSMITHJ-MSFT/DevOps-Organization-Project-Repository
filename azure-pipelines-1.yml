@@ -1,0 +1,33 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'Rob''s RDC Internal Subscription (3363d1e9-3de1-456e-bb81-498ffc6997f7)'
+    KeyVaultName: 'RDCKeyVault'
+    SecretsFilter: 'VMAdmin'
+    RunAsPreJob: false
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Rob''s RDC Internal Subscription (3363d1e9-3de1-456e-bb81-498ffc6997f7)'
+    subscriptionId: '3363d1e9-3de1-456e-bb81-498ffc6997f7'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'JanuaryVM'
+    location: 'Central US'
+    templateLocation: 'Linked artifact'
+    csmFile: 'AzureDeployVM.json'
+    csmParametersFile: 'VMParameters1.json'
+    overrideParameters: '-adminPassword $(VMAdmin)'
+    deploymentMode: 'Incremental'
+    deploymentName: 'TemplateDeploy'
